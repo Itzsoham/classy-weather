@@ -41,14 +41,16 @@ function App() {
   useEffect(
     function () {
       async function fetchWeather() {
+        if (location.length < 2) return; // Don't proceed if location is too short
+
         setIsLoading(true);
-        // 1) Getting location (geocoding)
+
         try {
+          // 1) Getting location (geocoding)
           const geoRes = await fetch(
             `https://geocoding-api.open-meteo.com/v1/search?name=${location}`
           );
           const geoData = await geoRes.json();
-          // console.log(geoData);
 
           if (!geoData.results) throw new Error("Location not found");
 
@@ -76,8 +78,6 @@ function App() {
     [location]
   );
 
-  if (location.length < 2) return setWeather({ weather: {} });
-
   return (
     <div className="app">
       <h1>Classy Weather</h1>
@@ -91,6 +91,7 @@ function App() {
     </div>
   );
 }
+
 function Input({ location, onChangeLocation }) {
   return (
     <div>
@@ -114,7 +115,7 @@ function Weather({ weather, location }) {
 
   return (
     <div>
-      <h2>Weather {location}</h2>
+      <h2>Weather {location.displayLocation}</h2>
       <ul className="weather">
         {dates.map((date, i) => (
           <Day
